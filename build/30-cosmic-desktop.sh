@@ -53,7 +53,14 @@ copr_install_isolated "ryanabx/cosmic-epoch" \
     cosmic-files \
     cosmic-edit \
     cosmic-term \
+    cosmic-store \
+    cosmic-player \
     cosmic-workspaces
+
+# fedora-release-cosmic.noarch	Base package for Fedora COSMIC specific default configurations
+# fedora-release-cosmic-atomic.noarch	Base package for Fedora COSMIC Atomic specific default configurations
+# fedora-release-identity-cosmic.noarch	Package providing the identity for Fedora COSMIC Spin
+# fedora-release-identity-cosmic-atomic.noarch	Package providing the identity for Fedora COSMIC Atomic
 
 echo "COSMIC desktop installed successfully"
 echo "::endgroup::"
@@ -65,7 +72,7 @@ systemctl enable cosmic-greeter
 
 # Set COSMIC as default session
 mkdir -p /etc/X11/sessions
-cat > /etc/X11/sessions/cosmic.desktop << 'COSMICDESKTOP'
+cat >/etc/X11/sessions/cosmic.desktop <<'COSMICDESKTOP'
 [Desktop Entry]
 Name=COSMIC
 Comment=COSMIC Desktop Environment
