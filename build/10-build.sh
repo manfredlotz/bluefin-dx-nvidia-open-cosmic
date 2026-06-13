@@ -33,7 +33,7 @@ mkdir -p /usr/share/ublue-os/homebrew/
 cp /ctx/custom/brew/*.Brewfile /usr/share/ublue-os/homebrew/
 
 # Consolidate Just Files
-find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >> /usr/share/ublue-os/just/60-custom.just
+find /ctx/custom/ujust -iname '*.just' -exec printf "\n\n" \; -exec cat {} \; >>/usr/share/ublue-os/just/60-custom.just
 
 # Copy Flatpak preinstall files
 mkdir -p /etc/flatpak/preinstall.d/
@@ -44,7 +44,23 @@ echo "::endgroup::"
 echo "::group:: Install Packages"
 
 # Install packages using dnf5
-# Example: dnf5 install -y tmux
+
+# install additional packages
+dnf5 install -y snapper
+mkdir -p -m 755 /usr/libexec/snapper/plugins
+
+dnf5 install -y dovecot dovecot-pigeonhole
+dnf5 install -y opensmtpd
+
+# getting more SELinux related  man pages and documentation for SELinux policy modules
+dnf5 install -y selinux-policy-doc
+
+# want to mount remote file systems via SSH
+dnf5 install -y fuse-sshfs
+
+dnf install --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
+
+dnf5 install -y spice-gtk-tools
 
 # Example using COPR with isolated pattern:
 # copr_install_isolated "ublue-os/staging" package-name
