@@ -23,72 +23,99 @@
 #
 # 1. Context Stage (ctx) - Combines resources from:
 #    - Local build scripts and custom files
-#    - @projectbluefin/common - Desktop configuration shared with Aurora 
+#    - @projectbluefin/common - Desktop configuration shared with Aurora
 #    - @ublue-os/brew - Homebrew integration
 #
 # 2. Base Image Options:
+#    - `ghcr.io/ublue-os/bluefin-dx-nvidia-open:stable` (Bluefin, GNOME, NVIDIA open drivers)
 #    - `ghcr.io/ublue-os/silverblue-main:latest` (Fedora and GNOME)
-#    - `ghcr.io/ublue-os/base-main:latest` (Fedora and no desktop 
-#    - `quay.io/centos-bootc/centos-bootc:stream10 (CentOS-based)` 
+#    - `ghcr.io/ublue-os/base-main:latest` (Fedora and no desktop)
+#    - `quay.io/centos-bootc/centos-bootc:stream10` (CentOS-based)
 #
 # See: https://docs.projectbluefin.io/contributing/ for architecture diagram
 ###############################################################################
+
+# OCI context images - imported below and pinned directly in their FROM lines.
+# The base image is pinned in the FROM line below and updated by Renovate.
+FROM ghcr.io/projectbluefin/common:latest@sha256:df2fa93dac84cda91d568bd694e5051abbbdba37bf3d54a6cc15cdc80e645e2c AS common
+FROM ghcr.io/ublue-os/brew:latest@sha256:5c5b6dea4b9faaab4d6fa81d7fc4f37f218c8a75a0839c72ae70b268bfdf4b0f AS brew
 
 # Context stage - combine local and imported OCI container resources
 FROM scratch AS ctx
 
 COPY build /build
 COPY custom /custom
-# Copy from OCI containers to distinct subdirectories to avoid conflicts
-# Note: Renovate can automatically update these :latest tags to SHA-256 digests for reproducibility
-COPY --from=ghcr.io/projectbluefin/common:latest@sha256:b8fe93b16674a547b4cf38493af19caa484d9575956fc3be04ca3d10faec23ff /system_files /oci/common
-COPY --from=ghcr.io/ublue-os/brew:latest@sha256:2eca44f5b4b58b8271a625d61c2c063b7c8776f68d004ae67563e2a79450be9c /system_files /oci/brew
 
-# Base Image - GNOME included
-#FROM ghcr.io/ublue-os/silverblue-main:latest@sha256:c4491852e05bea9a19c7ff22f3a5247803ec87e4fb954d31ac2d786ad6128fec
+# Copy from OCI containers to distinct subdirectories to avoid conflicts
+COPY --from=common /system_files /oci/common
+COPY --from=brew /system_files /oci/brew
+
+# Base Image - Bluefin with NVIDIA open drivers
 FROM ghcr.io/ublue-os/bluefin-dx-nvidia-open:stable
 
-## Alternative base images, no desktop included (uncomment to use):
-# FROM ghcr.io/ublue-os/base-main:latest    
-# FROM quay.io/centos-bootc/centos-bootc:stream10
-
-## Alternative GNOME OS base image (uncomment to use):
-# FROM quay.io/gnome_infrastructure/gnome-build-meta:gnomeos-nightly
-
-### /opt
-## Some bootable images, like Fedora, have /opt symlinked to /var/opt, in order to
-## make it mutable/writable for users. However, some packages write files to this directory,
-## thus its contents might be wiped out when bootc deploys an image, making it troublesome for
-## some packages. Eg, google-chrome, docker-desktop.
-##
-## Uncomment the following line if one desires to make /opt immutable and be able to be used
-## by the package manager.
-
-# RUN rm /opt && mkdir /opt
+# Image identity - these define how bootc, fastfetch, and the ublue ecosystem
+# recognize your image. Change these to match your project name.
+ARG IMAGE_NAME="bluefin-dx-nvidia-open-cosmic"
+ARG IMAGE_VENDOR="manfredlotz"
+ARG UBLUE_IMAGE_TAG="stable"
+ARG BASE_IMAGE_NAME="bluefin-dx-nvidia-open"
+ARG FEDORA_MAJOR_VERSION="44"
+ARG VERSION=""
 
 ### MODIFICATIONS
 ## Make modifications desired in your image and install packages by modifying the build scripts.
-## The following RUN directive mounts the ctx stage which includes:
+## The following RUN directives mount the ctx stage which includes:
 ##   - Local build scripts from /build
 ##   - Local custom files from /custom
-##   - Files from @projectbluefin/common at /oci/common
-##   - Files from @projectbluefin/branding at /oci/branding
-##   - Files from @ublue-os/artwork at /oci/artwork
+##   - Files from @projectbluefin/common at /oci/common (includes branding/artwork content)
 ##   - Files from @ublue-os/brew at /oci/brew
-## Scripts are run in numerical order (10-build.sh, 20-example.sh, etc.)
+## Scripts are run in numerical order (00-image-info.sh, 10-build.sh, etc.)
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
+    --mount=type=tmpfs,dst=/boot \
+    --mount=type=tmpfs,dst=/tmp \
+    /ctx/build/00-image-info.sh
+
+# Set dnf options before build scripts (persists across subsequent RUN layers)
+RUN cp /etc/dnf/dnf.conf /etc/dnf/dnf.conf.tmp \
+    && mv /etc/dnf/dnf.conf.tmp /etc/dnf/dnf.conf \
+    && dnf5 config-manager setopt keepcache=1 install_weak_deps=0
+
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=cache,dst=/var/cache/libdnf5 \
+    --mount=type=cache,dst=/var/cache/rpm-ostree \
+    --mount=type=secret,id=GITHUB_TOKEN \
+    --mount=type=tmpfs,dst=/boot \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build/10-build.sh
 
 RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
-    --mount=type=cache,dst=/var/cache \
-    --mount=type=cache,dst=/var/log \
+    --mount=type=cache,dst=/var/cache/libdnf5 \
+    --mount=type=cache,dst=/var/cache/rpm-ostree \
+    --mount=type=tmpfs,dst=/boot \
     --mount=type=tmpfs,dst=/tmp \
     /ctx/build/30-cosmic-desktop.sh
 
+### CLEANUP
+## Use Bluefin's clean-stage.sh to remove build artifacts before linting.
+## /run is deliberately not mounted as tmpfs here: clean-stage.sh must remove
+## image-layer files such as /run/dnf so bootc lint's nonempty-run-tmp check
+## passes. The script tolerates busy Buildah bind mounts while clearing contents.
+RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
+    --mount=type=tmpfs,dst=/tmp \
+    --mount=type=tmpfs,dst=/boot \
+    /ctx/build/clean-stage.sh
+
+### /opt
+## Makes /opt writeable by default. If you need /opt as an immutable real
+## directory for build-time packages (e.g. google-chrome, docker-desktop),
+## replace the next line with: RUN rm /opt && mkdir /opt
+RUN rm -rf /opt && ln -s /var/opt /opt
+
+### INIT
+## Required for bootc images
+CMD ["/sbin/init"]
+
 ### LINTING
-## Verify final image and contents are correct.
-RUN bootc container lint
+## Verify final image and contents are correct. --fatal-warnings catches issues.
+RUN bootc container lint --fatal-warnings
