@@ -58,6 +58,7 @@ dnf5 install -y selinux-policy-doc
 # want to mount remote file systems via SSH
 dnf5 install -y fuse-sshfs
 dnf5 install -y spice-gtk-tools
+dnf5 install -y rofi
 
 dnf5 install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
 dnf5 install -y ghostty ghostty-bat-syntax ghostty-neovim
