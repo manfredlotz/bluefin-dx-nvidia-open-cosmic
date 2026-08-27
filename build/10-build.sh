@@ -59,9 +59,15 @@ dnf5 install -y selinux-policy-doc
 dnf5 install -y fuse-sshfs
 dnf5 install -y spice-gtk-tools
 dnf5 install -y rofi
+dnf5 install -y kitty
+
+copr_install_isolated wezfurlong/wezterm-nightly wezterm
 
 dnf5 install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
 dnf5 install -y ghostty ghostty-bat-syntax ghostty-neovim
+
+# A cross-platform, multi-language package manager
+dnf5 install -y pixi
 
 # Example using COPR with isolated pattern:
 # copr_install_isolated "ublue-os/staging" package-name
