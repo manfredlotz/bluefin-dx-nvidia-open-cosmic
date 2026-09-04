@@ -27,13 +27,13 @@ echo "::group:: Remove GNOME Desktop"
 
 # Remove GNOME Shell and related packages
 dnf5 remove -y \
-    gnome-shell \
-    gnome-shell-extension* \
-    gnome-terminal \
-    gnome-software \
-    gnome-control-center \
-    nautilus \
-    gdm
+	gnome-shell \
+	gnome-shell-extension* \
+	gnome-terminal \
+	gnome-software \
+	gnome-control-center \
+	nautilus \
+	gdm
 
 echo "GNOME desktop removed"
 echo "::endgroup::"
@@ -43,19 +43,27 @@ echo "::group:: Install COSMIC Desktop"
 # Install COSMIC desktop from System76's COPR
 # Using isolated pattern to prevent COPR from persisting
 copr_install_isolated "ryanabx/cosmic-epoch" \
-    cosmic-session \
-    cosmic-greeter \
-    cosmic-comp \
-    cosmic-panel \
-    cosmic-launcher \
-    cosmic-applets \
-    cosmic-settings \
-    cosmic-files \
-    cosmic-edit \
-    cosmic-term \
-    cosmic-store \
-    cosmic-player \
-    cosmic-workspaces
+	cosmic-applets \
+	cosmic-calculator \
+	cosmic-ext-applet-emoji-selector \
+	cosmic-ext-applet-examine \
+	cosmic-ext-camera \
+	cosmic-ext-tweaks \
+	cosmic-comp \
+	cosmic-edit \
+	cosmic-ext-tweaks \
+	cosmic-files \
+	cosmic-greeter \
+	cosmic-launcher \
+	cosmic-monitor \
+	cosmic-panel \
+	cosmic-player \
+	cosmic-session \
+	cosmic-settings \
+	cosmic-store \
+	cosmic-term \
+	cosmic-wallpapers \
+	cosmic-workspaces
 
 # fedora-release-cosmic.noarch	Base package for Fedora COSMIC specific default configurations
 # fedora-release-cosmic-atomic.noarch	Base package for Fedora COSMIC Atomic specific default configurations
@@ -88,9 +96,9 @@ echo "::group:: Install Additional Utilities"
 
 # Install additional utilities that work well with COSMIC
 dnf5 install -y \
-    kitty \
-    flatpak \
-    xdg-desktop-portal-cosmic
+	kitty \
+	flatpak \
+	xdg-desktop-portal-cosmic
 
 echo "Additional utilities installed"
 echo "::endgroup::"
