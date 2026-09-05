@@ -27,12 +27,24 @@ echo "::group:: Remove GNOME Desktop"
 
 # Remove GNOME Shell and related packages
 dnf5 remove -y \
+	gnome-bluetooth \
+	gnome-color-manager \
+	gnome-control-center \
+	gnome-control-center-filesystem \
+	gnome-epub-thumbnailer \
+	gonme-icon-theme \
+	gnome-online-accounts \
+	gnome-rounded-blurs \
 	gnome-shell \
 	gnome-shell-extension* \
-	gnome-terminal \
+	gnome-shell-common \
 	gnome-software \
-	gnome-control-center \
+	gnome-terminal \
+	gnome-tour \
+	gnome-tweaks \
+	gnome-user-docs \
 	nautilus \
+	xdg-portal-gnome \
 	gdm
 
 echo "GNOME desktop removed"
