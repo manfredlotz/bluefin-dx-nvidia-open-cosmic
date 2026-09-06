@@ -51,7 +51,9 @@ COPY --from=common /system_files /oci/common
 COPY --from=brew /system_files /oci/brew
 
 # Base Image - Bluefin with NVIDIA open drivers
-FROM ghcr.io/ublue-os/bluefin-dx-nvidia-open:stable
+#FROM ghcr.io/ublue-os/bluefin-dx-nvidia-open:stable
+FROM ghcr.io/ublue-os/bluefin-dx-open:stable
+#????FROM  ghcr.io/projectbluefin/bluefin-dx:stable
 
 # Image identity - these define how bootc, fastfetch, and the ublue ecosystem
 # recognize your image. Change these to match your project name.
