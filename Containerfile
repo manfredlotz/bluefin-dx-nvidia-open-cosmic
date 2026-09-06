@@ -56,13 +56,14 @@ COPY --from=brew /system_files /oci/brew
 # https://github.com/5init/bluefin-dx-cosmic/blob/main/Containerfile
 #FROM ghcr.io/ublue-os/bluefin-dx:stable
 
-FROM ghcr.io/projectbluefin/bluefin:lts
+#FROM ghcr.io/projectbluefin/bluefin-lts:stable
+FROM ghcr.io/projectbluefin/bluefin:stable
 
 # Image identity - these define how bootc, fastfetch, and the ublue ecosystem
 # recognize your image. Change these to match your project name.
 ARG IMAGE_NAME="bluefin-dx-nvidia-open-cosmic"
 ARG IMAGE_VENDOR="manfredlotz"
-ARG UBLUE_IMAGE_TAG="stable"
+ARG UBLUE_IMAGE_TAG="lts"
 ARG BASE_IMAGE_NAME="bluefin-dx-nvidia-open"
 ARG FEDORA_MAJOR_VERSION="44"
 ARG VERSION=""
