@@ -56,7 +56,7 @@ COPY --from=brew /system_files /oci/brew
 # https://github.com/5init/bluefin-dx-cosmic/blob/main/Containerfile
 #FROM ghcr.io/ublue-os/bluefin-dx:stable
 
-FROM ghcr.io/projectbluefin/bluefin:stable
+FROM ghcr.io/projectbluefin/bluefin:lts
 
 # Image identity - these define how bootc, fastfetch, and the ublue ecosystem
 # recognize your image. Change these to match your project name.
