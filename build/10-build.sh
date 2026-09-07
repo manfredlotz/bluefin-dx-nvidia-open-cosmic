@@ -46,29 +46,29 @@ echo "::group:: Install Packages"
 # Install packages using dnf5
 
 # install additional packages
-dnf5 install -y snapper
+dnf install -y snapper
 mkdir -p -m 755 /usr/libexec/snapper/plugins
 
-dnf5 install -y dovecot dovecot-pigeonhole
-dnf5 install -y opensmtpd
+dnf install -y dovecot dovecot-pigeonhole
+dnf install -y opensmtpd
 
 # getting more SELinux related  man pages and documentation for SELinux policy modules
-dnf5 install -y selinux-policy-doc
+dnf install -y selinux-policy-doc
 
 # want to mount remote file systems via SSH
-dnf5 install -y fuse-sshfs
-dnf5 install -y spice-gtk-tools
-dnf5 install -y nss-tools
-dnf5 install -y rofi
-dnf5 install -y kitty
+dnf install -y fuse-sshfs
+dnf install -y spice-gtk-tools
+dnf install -y nss-tools
+dnf install -y rofi
+dnf install -y kitty
 
 copr_install_isolated wezfurlong/wezterm-nightly wezterm
 
-dnf5 install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
-dnf5 install -y ghostty ghostty-bat-syntax ghostty-neovim
+dnf install -y --nogpgcheck --repofrompath 'terra,https://repos.fyralabs.com/terra$releasever' terra-release
+dnf install -y ghostty ghostty-bat-syntax ghostty-neovim
 
 # A cross-platform, multi-language package manager
-dnf5 install -y pixi
+dnf install -y pixi
 
 # Example using COPR with isolated pattern:
 # copr_install_isolated "ublue-os/staging" package-name
