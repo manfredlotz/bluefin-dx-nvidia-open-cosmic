@@ -26,7 +26,7 @@ source /ctx/build/copr-helpers.sh
 echo "::group:: Remove GNOME Desktop"
 
 # Remove GNOME Shell and related packages
-dnf5 remove -y \
+dnf remove -y \
 	gnome-bluetooth \
 	gnome-color-manager \
 	gnome-control-center \
@@ -107,7 +107,7 @@ echo "::endgroup::"
 echo "::group:: Install Additional Utilities"
 
 # Install additional utilities that work well with COSMIC
-dnf5 install -y \
+dnf install -y \
 	kitty \
 	flatpak \
 	xdg-desktop-portal-cosmic
