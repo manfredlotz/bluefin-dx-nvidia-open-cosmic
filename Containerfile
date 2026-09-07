@@ -111,6 +111,8 @@ RUN --mount=type=bind,from=ctx,source=/,target=/ctx \
     --mount=type=tmpfs,dst=/boot \
     /ctx/build/clean-stage.sh
 
+RUN rm -rf /boot/*
+
 ### /opt
 ## Makes /opt writeable by default. If you need /opt as an immutable real
 ## directory for build-time packages (e.g. google-chrome, docker-desktop),
