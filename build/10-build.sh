@@ -70,6 +70,9 @@ dnf5 install -y ghostty ghostty-bat-syntax ghostty-neovim
 # A cross-platform, multi-language package manager
 dnf5 install -y pixi
 
+# this is a test only
+dnf5 install -y amd-gpu-firmware amd-ucode-firmware
+
 # Example using COPR with isolated pattern:
 # copr_install_isolated "ublue-os/staging" package-name
 
