@@ -32,19 +32,15 @@ dnf5 remove -y \
 	gnome-control-center \
 	gnome-control-center-filesystem \
 	gnome-epub-thumbnailer \
-	gonme-icon-theme \
 	gnome-online-accounts \
-	gnome-rounded-blurs \
 	gnome-shell \
 	gnome-shell-extension* \
 	gnome-shell-common \
-	gnome-software \
-	gnome-terminal \
 	gnome-tour \
 	gnome-tweaks \
 	gnome-user-docs \
 	nautilus \
-	xdg-portal-gnome \
+	xdg-desktop-portal-gnome \
 	gdm
 
 echo "GNOME desktop removed"
@@ -105,12 +101,6 @@ echo "Display manager configured"
 echo "::endgroup::"
 
 echo "::group:: Install Additional Utilities"
-
-# Install additional utilities that work well with COSMIC
-dnf5 install -y \
-	kitty \
-	flatpak \
-	xdg-desktop-portal-cosmic
 
 echo "Additional utilities installed"
 echo "::endgroup::"
